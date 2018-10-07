@@ -5,4 +5,4 @@ Arduino driver for gas sensor MQ131 (O3, NOx and CL2)
 
 
 ## Links
- * Datasheet MQ131 on Sensors Portal : Arduino-MQ131-driver/datasheet/MQ131.pdf
+ * [Datasheet MQ131](Arduino-MQ131-driver/datasheet/MQ131.pdf)
