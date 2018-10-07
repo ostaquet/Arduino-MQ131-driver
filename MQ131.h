@@ -28,7 +28,7 @@ class MQ131 {
 		// the main loop (delay() function included)
 		void begin();								
 
-		// Read the concentration of gas (return value in ppm)
+		// Read the concentration of gas (return value in ppb - Parts Per Billion)
 		// The environment should be set for accurate results
 		float readNOx();
 		float readCL2();

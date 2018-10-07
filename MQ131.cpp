@@ -140,7 +140,7 @@
  }
 
 /**
- * Get gas concentration for NOx in ppm
+ * Get gas concentration for NOx in ppb
  */
  float MQ131::readNOx() {
  	// If no value Rs read, return 0.0
@@ -151,14 +151,14 @@
  	// Compute the ratio Rs/R0 and apply the environmental correction
  	float ratio = lastValueRs / valueR0 * getEnvCorrectRatio();
 
- 	// Use the equation to compute the NOx concentration in ppm
+ 	// Use the equation to compute the NOx concentration in ppb
  	// R^2 = 0.997
- 	float ppm = 456.23 * pow(ratio, -2.204);
- 	return ppm;
+ 	float ppb = 456.23 * pow(ratio, -2.204);
+ 	return ppb;
  }
 
  /**
- * Get gas concentration for CL2 in ppm
+ * Get gas concentration for CL2 in ppb
  */
  float MQ131::readCL2() {
  	// If no value Rs read, return 0.0
@@ -169,14 +169,14 @@
  	// Compute the ratio Rs/R0 and apply the environmental correction
  	float ratio = lastValueRs / valueR0 * getEnvCorrectRatio();
 
- 	// Use the equation to compute the CL2 concentration in ppm
+ 	// Use the equation to compute the CL2 concentration in ppb
  	// R^2 = 0.9897
- 	float ppm = 48.313 * pow(ratio, -1.179);
- 	return ppm;
+ 	float ppb = 48.313 * pow(ratio, -1.179);
+ 	return ppb;
  }
 
  /**
- * Get gas concentration for O3 in ppm
+ * Get gas concentration for O3 in ppb
  */
  float MQ131::readO3() {
  	// If no value Rs read, return 0.0
@@ -187,10 +187,10 @@
  	// Compute the ratio Rs/R0 and apply the environmental correction
  	float ratio = lastValueRs / valueR0 * getEnvCorrectRatio();
 
- 	// Use the equation to compute the O3 concentration in ppm
+ 	// Use the equation to compute the O3 concentration in ppb
  	// R^2 = 0.9987
- 	float ppm = 24.049 * pow(ratio, -1.139);
- 	return ppm;
+ 	float ppb = 24.049 * pow(ratio, -1.139);
+ 	return ppb;
  }
 
  /**
