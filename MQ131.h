@@ -16,49 +16,79 @@
 #define VALUE_R0 50235.30
 #define TEMPERATURE_CELSIUS  20
 #define HUMIDITY_PERCENT 65
+#define RL_OHMS 10000
 
 class MQ131 {
 	public:
-		MQ131(int _pinPower, int _pinSensor);		// Initialize the driver
+		// Initialize the driver (eventually with RL value in Ohms)
+		MQ131(int _pinPower, int _pinSensor);
+		MQ131(int _pinPower, int _pinSensor, int _RL);
 
-		bool begin();								// Manage a full cycle with delay()
-													// without giving the hand back to
-													// the main loop (delay() function included)
+		// Manage a full cycle with delay() without giving the hand back to
+		// the main loop (delay() function included)
+		void begin();								
 
-//		float readNOx();							// Read the concentration of gas
-//		float readCL2();
-//		float readO3();
+		// Read the concentration of gas (return value in ppm)
+		// The environment should be set for accurate results
+		float readNOx();
+		float readCL2();
+		float readO3();
 
-		void setTimeToRead(long millis);			// Define the time to read after
-													// started the heater
-		long getTimeToRead();						// Obtain time to read
-													// (set automatically by calibrate() function)
+		// Define environment
+		// Define the temperature (in Celsius) and humidity (in %) to adjust the
+		// output values based on typical characteristics of the MQ131
+		void setEnv(int tempCels, int humPc);
 
-//		void setR0(float valueR0);					// Define the R0 for the calibration
-//		float setR0();								// Obtain the R0 currently set
-													// (set automatically by calibrate() function)
+		// Setup calibration: Time to read
+		// Define the time to read after started the heater
+		// Get function also available to know the value after calibrate()
+		// (the time to read is calculated automatically after calibration)
+		void setTimeToRead(long millis);
+		long getTimeToRead();
 
-//		void setEnv(int tempCels, int humPc);		// Define the temperature (in Celsius)
-													// and humidity (in %) to adjust the
-													// output values based on typical
-													// characteristics of the MQ131
+		// Setup calibration: R0
+		// Define the R0 for the calibration
+		// Get function also available to know the value after calibrate()
+		// (the time to read is calculated automatically after calibration)
+		void setR0(float _valueR0);
+		float getR0();
 
-//		void calibrate();							// Run a calibration cycle
-													// Ideally, 20°C 65% humidity in
-													// clean fresh air (can take some minutes)
+		// Launch full calibration cycle
+		// Ideally, 20°C 65% humidity in clean fresh air (can take some minutes)
+		// For further use of calibration values, please use getTimeToRead() and getR0()
+//		void calibrate();
 
 	protected:
+		// Internal function to manage the heater
 		void startHeater();
 		bool isTimeToRead();
 		void stopHeater();
 
+		// Internal reading function of Rs
+		float readRs();
+
+		// Get environmental correction to apply on ration Rs/R0
+		float getEnvCorrectRatio();
+
 	private:
+		// pin for the circuit
 		int pinPower = -1;
 		int pinSensor = -1;
+
+		// Load resistance value
+		int valueRL = RL_OHMS;
+
+		// Timer to keep track of the pre-heating
 		long millisLastStart = -1;
 		long millisToRead = TIME_TO_READ_MILLIS;
+
+		// Calibration of R0
 		float valueR0 = VALUE_R0;
+
+		// Last value for sensor resistance
 		float lastValueRs = -1;
+
+		// Parameters for environment
 		int temperatureCelsuis = TEMPERATURE_CELSIUS;
 		int humidityPercent = HUMIDITY_PERCENT;
 };
