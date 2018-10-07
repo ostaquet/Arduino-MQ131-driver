@@ -5,7 +5,7 @@ Arduino driver for gas sensor MQ131 (O3, NOx and CL2)
  * The MQ131 is a gas sensor composed by a heater circuit and a sensor circuit.
  * Heater consumes 150mA; don't connect it directly on a pin of the Arduino.
  * Sensor MQ131 requires minimum 48h pre-heat time before giving consistent results.
- * This drive is made to control a "naked" MQ131.
+ * This driver is made to control a "naked" MQ131.
  
 ## Circuit
  * Heater is controlled by NPN transistor via the control pin (on schema PIN 2, yellow connector)
