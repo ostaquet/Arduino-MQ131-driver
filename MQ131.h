@@ -17,34 +17,38 @@
 
 class MQ131 {
 	public:
-		MQ131(int pinPower, int pinSensor);			// Initialize the driver
+		MQ131(int _pinPower, int _pinSensor);		// Initialize the driver
 		
-		boolean begin();							// Manage a full cycle with delay()
+		bool begin();								// Manage a full cycle with delay()
 													// without giving the hand back to
 													// the main loop (delay() function included)
 
-		float readNOx();							// Read the concentration of gas
-		float readCL2();
-		float readO3();
+//		float readNOx();							// Read the concentration of gas
+//		float readCL2();
+//		float readO3();
 
 		void setTimeToRead(long millis);			// Define the time to read after
 													// started the heater
 		long getTimeToRead();						// Obtain time to read
 													// (set automatically by calibrate() function)
 
-		void setR0(float valueR0);					// Define the R0 for the calibration
-		float setR0();								// Obtain the R0 currently set
+//		void setR0(float valueR0);					// Define the R0 for the calibration
+//		float setR0();								// Obtain the R0 currently set
 													// (set automatically by calibrate() function)
 
-		void setEnv(int tempCels, int humPc);		// Define the temperature (in Celsius)
+//		void setEnv(int tempCels, int humPc);		// Define the temperature (in Celsius)
 													// and humidity (in %) to adjust the
 													// output values based on typical
 													// characteristics of the MQ131
 
-		void calibrate();							// Run a calibration cycle
+//		void calibrate();							// Run a calibration cycle
 													// Ideally, 20°C 65% humidity in
 													// clean fresh air (can take some minutes)
 
+	protected:
+		void startHeater();
+		bool isTimeToRead();
+		void stopHeater();
 
 	private:
 		int pinPower = -1;
