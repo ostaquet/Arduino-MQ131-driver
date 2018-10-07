@@ -9,6 +9,8 @@
 #ifndef _MQ131_H_
 #define _MQ131_H_
 
+#include <Arduino.h>
+
 // Default values
 #define TIME_TO_READ_MILLIS 240000
 #define VALUE_R0 50235.30
@@ -18,7 +20,7 @@
 class MQ131 {
 	public:
 		MQ131(int _pinPower, int _pinSensor);		// Initialize the driver
-		
+
 		bool begin();								// Manage a full cycle with delay()
 													// without giving the hand back to
 													// the main loop (delay() function included)
@@ -59,6 +61,6 @@ class MQ131 {
 		float lastValueRs = -1;
 		int temperatureCelsuis = TEMPERATURE_CELSIUS;
 		int humidityPercent = HUMIDITY_PERCENT;
-}
+};
 
 #endif // _MQ131_H_
