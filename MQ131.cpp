@@ -119,16 +119,23 @@
  */
  float MQ131::getEnvCorrectRatio() {
  	// Select the right equation based on humidity
+ 	// If default value, ignore correction ratio
+ 	if(humidityPercent == 60 && temperatureCelsuis == 20) {
+ 		return 1.0;
+ 	}
  	// For humidity > 75%, use the 85% curve
  	if(humidityPercent > 75) {
+ 		// R^2 = 0.9986
  		return -0.0141 * temperatureCelsuis + 1.5623;
  	}
  	// For humidity > 50%, use the 60% curve
  	if(humidityPercent > 50) {
+ 		// R^2 = 0.9976
  		return -0.0119 * temperatureCelsuis + 1.3261;
  	}
 
  	// Humidity < 50%, use the 30% curve
+ 	// R^2 = 0.996
  	return -0.0103 * temperatureCelsuis + 1.1507;
  }
 

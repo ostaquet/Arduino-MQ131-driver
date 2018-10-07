@@ -12,8 +12,8 @@
 #include <Arduino.h>
 
 // Default values
-#define TIME_TO_READ_MILLIS 240000
-#define VALUE_R0 50235.30
+#define TIME_TO_READ_MILLIS 150000
+#define VALUE_R0 417.09
 #define TEMPERATURE_CELSIUS  20
 #define HUMIDITY_PERCENT 65
 #define RL_OHMS 10000
