@@ -9,7 +9,7 @@ Arduino driver for gas sensor MQ131 (O3, NOx and CL2)
  
 ## Circuit
  * Heater is controlled by NPN transistor via the control pin (on schema PIN 2, yellow connector)
- * Result of sensor is read through analog (on schema pin A0, green connector)
+ * Result of sensor is read through analog with RL of 10kΩ (on schema pin A0, green connector)
  
 ![Breadboard schematics](img/MQ131_bb.png)
 
