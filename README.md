@@ -6,8 +6,8 @@ Arduino driver for gas sensor MQ131 (O3, NOx and CL2)
  * Heater consumes minimum 150mA. So, __don't connect it directly on a pin of the Arduino__.
  * Sensor MQ131 requires minimum 48h pre-heat time before giving consistent results (also called "burn-in" time)
  * There are 3 different datasheets for the MQ131 for 3 different types of sensor (see links)
- * This driver is made to control a "naked" MQ131 for the [bakelite black MQ131](https://github.com/ostaquet/Arduino-MQ131-driver/blob/master/datasheet/MQ131-black.pdf) and the [metal MQ131](https://github.com/ostaquet/Arduino-MQ131-driver/blob/master/datasheet/MQ131-metal.pdf).
- * This driver __is not tested__ with the [bakelite blue MQ131 (6V heater)](https://github.com/ostaquet/Arduino-MQ131-driver/blob/master/datasheet/MQ131-blue.pdf).
+ * This driver is made to control a "naked" MQ131 for the [black bakelite MQ131](https://github.com/ostaquet/Arduino-MQ131-driver/blob/master/datasheet/MQ131-black.pdf) and the [metal MQ131](https://github.com/ostaquet/Arduino-MQ131-driver/blob/master/datasheet/MQ131-metal.pdf).
+ * This driver __is not tested__ with the [blue bakelite MQ131 (6V heater)](https://github.com/ostaquet/Arduino-MQ131-driver/blob/master/datasheet/MQ131-blue.pdf).
  
 ## Circuit
  * Heater is controlled by NPN transistor via the control pin (on schema PIN 2, yellow connector)
