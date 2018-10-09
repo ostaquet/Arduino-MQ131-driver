@@ -11,7 +11,10 @@
 /**
  * Init core variables
  */
- MQ131::MQ131(int _pinPower, int _pinSensor) {
+ MQ131::MQ131(int _pinPower, int _pinSensor, MQ131Model _model) {
+ 	// Setup the model
+ 	model = _model;
+
  	// Store the pin info
  	pinPower = _pinPower;
  	pinSensor = _pinSensor;
@@ -21,8 +24,11 @@
  	pinMode(pinSensor, INPUT);
  }
 
- MQ131::MQ131(int _pinPower, int _pinSensor, int _RL) {
- 	// Store the pin info
+ MQ131::MQ131(int _pinPower, int _pinSensor, MQ131Model _model, int _RL) {
+ 	// Setup the model
+ 	model = _model;
+
+ 	// Store the circuit info (pin and load resistance)
  	pinPower = _pinPower;
  	pinSensor = _pinSensor;
  	valueRL = _RL;
@@ -140,43 +146,43 @@
  }
 
 /**
- * Get gas concentration for NOx in ppb
+ * Get gas concentration for NOx in ppm
  */
  float MQ131::readNOx() {
- 	// If no value Rs read, return 0.0
- 	if(lastValueRs < 0) {
+ 	// If no value Rs read or metal model (no curves for NOx)
+ 	if(lastValueRs < 0 || model == METAL) {
  		return 0.0;
  	}
 
  	// Compute the ratio Rs/R0 and apply the environmental correction
  	float ratio = lastValueRs / valueR0 * getEnvCorrectRatio();
 
- 	// Use the equation to compute the NOx concentration in ppb
+ 	// Use the equation to compute the NOx concentration in ppm
  	// R^2 = 0.997
- 	float ppb = 456.23 * pow(ratio, -2.204);
- 	return ppb;
+ 	float ppm = 456.23 * pow(ratio, -2.204);
+ 	return ppm;
  }
 
  /**
- * Get gas concentration for CL2 in ppb
+ * Get gas concentration for CL2 in ppm
  */
  float MQ131::readCL2() {
- 	// If no value Rs read, return 0.0
- 	if(lastValueRs < 0) {
+ 	// If no value Rs read or metal model (no curves for CL2)
+ 	if(lastValueRs < 0 || model == METAL) {
  		return 0.0;
  	}
 
  	// Compute the ratio Rs/R0 and apply the environmental correction
  	float ratio = lastValueRs / valueR0 * getEnvCorrectRatio();
 
- 	// Use the equation to compute the CL2 concentration in ppb
+ 	// Use the equation to compute the CL2 concentration in ppm
  	// R^2 = 0.9897
- 	float ppb = 48.313 * pow(ratio, -1.179);
- 	return ppb;
+ 	float ppm = 48.313 * pow(ratio, -1.179);
+ 	return ppm;
  }
 
  /**
- * Get gas concentration for O3 in ppb
+ * Get gas concentration for O3 in ppm
  */
  float MQ131::readO3() {
  	// If no value Rs read, return 0.0
@@ -187,10 +193,20 @@
  	// Compute the ratio Rs/R0 and apply the environmental correction
  	float ratio = lastValueRs / valueR0 * getEnvCorrectRatio();
 
- 	// Use the equation to compute the O3 concentration in ppb
- 	// R^2 = 0.9987
- 	float ppb = 24.049 * pow(ratio, -1.139);
- 	return ppb;
+ 	switch(model) {
+ 		case BLACK_BAKELITE :
+ 			// Use the equation to compute the O3 concentration in ppm
+ 			// R^2 = 0.9987
+ 			return 24.049 * pow(ratio, -1.139);
+ 		case METAL :
+ 			// Use the equation to compute the O3 concentration in ppm
+ 			// R^2 = 0.99
+ 			return 8.1399 * pow(ratio, 2.3297);
+ 		default :
+ 			return 0.0;
+ 	}
+
+ 	
  }
 
  /**

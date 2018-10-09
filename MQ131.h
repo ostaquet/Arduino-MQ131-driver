@@ -13,16 +13,18 @@
 
 // Default values
 #define TIME_TO_READ_MILLIS 150000
-#define VALUE_R0 417.09
+#define VALUE_R0_METAL 417.09
 #define TEMPERATURE_CELSIUS  20
 #define HUMIDITY_PERCENT 65
 #define RL_OHMS 10000
 
+enum MQ131Model {BLACK_BAKELITE, METAL};
+
 class MQ131 {
 	public:
 		// Initialize the driver (eventually with RL value in Ohms)
-		MQ131(int _pinPower, int _pinSensor);
-		MQ131(int _pinPower, int _pinSensor, int _RL);
+		MQ131(int _pinPower, int _pinSensor, MQ131Model _model);
+		MQ131(int _pinPower, int _pinSensor, MQ131Model _model, int _RL);
 
 		// Manage a full cycle with delay() without giving the hand back to
 		// the main loop (delay() function included)
@@ -71,11 +73,12 @@ class MQ131 {
 		float getEnvCorrectRatio();
 
 	private:
-		// pin for the circuit
+		// Model of MQ131
+		MQ131Model model;
+
+		// Details about the circuit: pins and load resistance value
 		int pinPower = -1;
 		int pinSensor = -1;
-
-		// Load resistance value
 		int valueRL = RL_OHMS;
 
 		// Timer to keep track of the pre-heating
@@ -83,7 +86,7 @@ class MQ131 {
 		long millisToRead = TIME_TO_READ_MILLIS;
 
 		// Calibration of R0
-		float valueR0 = VALUE_R0;
+		float valueR0 = VALUE_R0_METAL;
 
 		// Last value for sensor resistance
 		float lastValueRs = -1;
