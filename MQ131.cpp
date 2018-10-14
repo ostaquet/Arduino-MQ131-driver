@@ -23,8 +23,8 @@
   // Setup default calibration value
   switch(model) {
     case LOW_CONCENTRATION :
-      setR0(83090.91);
-      setTimeToRead(446);
+      setR0(110470.60);
+      setTimeToRead(72);
       break;
     case HIGH_CONCENTRATION :
       setR0(385.40);
