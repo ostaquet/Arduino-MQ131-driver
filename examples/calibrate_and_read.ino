@@ -1,5 +1,10 @@
 #include "MQ131.h"
 
+// Init the sensor
+// - Heater control on pin 2
+// - Sensor analog read on pin A0
+// - Model LOW_CONCENTRATION
+// - Load resistance RL of 10KOhms (10000 Ohms)
 MQ131 sensor(2,A0, LOW_CONCENTRATION, 10000);
 
 void setup() {
