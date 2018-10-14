@@ -119,6 +119,12 @@ sensor.getO3(MG_M3);
 sensor.getO3(UG_M3);
 ```
 
+The sensor is sensible to environmental variation (temperature and humidity). If you want to have correct values, you should set the temperature and the humidity before the call to getO3() function with the function setEnv(). Temperature are in °C and humidity in %. The values should come from another sensor like the DHT22.
+```
+sensor.setEnv(23, 70);
+```
+
+
 ## Links
  * [Calculation of sensitivity curves](https://github.com/ostaquet/Arduino-MQ131-driver/blob/master/datasheet/Sensitivity_curves.xlsx)
  * [Datasheet MQ131 low concentration (black bakelite version)](https://github.com/ostaquet/Arduino-MQ131-driver/blob/master/datasheet/MQ131-low-concentration.pdf)

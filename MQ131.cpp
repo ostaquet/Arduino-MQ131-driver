@@ -170,92 +170,93 @@
       return convert(8.1399 * pow(ratio, 2.3297), PPM, unit);
  		default :
  			return 0.0;
- 	}
- }
+  }
+}
 
  /**
   * Convert gas unit of gas concentration
   */
  float MQ131::convert(float input, MQ131Unit unitIn, MQ131Unit unitOut) {
-    if(unitIn == unitOut) {
+  if(unitIn == unitOut) {
+    return input;
+  }
+
+  float concentration = 0;
+
+  switch(unitOut) {
+    case PPM :
+      // We assume that the unit IN is PPB as the sensor provide only in PPB and PPM
+      // depending on the type of sensor (METAL or BLACK_BAKELITE)
+      // So, convert PPB to PPM
+      return input / 1000.0;
+    case PPB :
+      // We assume that the unit IN is PPM as the sensor provide only in PPB and PPM
+      // depending on the type of sensor (METAL or BLACK_BAKELITE)
+      // So, convert PPM to PPB
+      return input * 1000.0;
+    case MG_M3 :
+      if(unitIn == PPM) {
+        concentration = input;
+      } else {
+        concentration = input / 1000.0;
+      }
+      return concentration * 48.0 / 22.71108;
+    case UG_M3 :
+      if(unitIn == PPB) {
+        concentration = input;
+      } else {
+        concentration = input * 1000.0;
+      }
+      return concentration * 48.0 / 22.71108;
+    default :
       return input;
-    }
-
-    float concentration = 0;
-
-    switch(unitOut) {
-      case PPM :
-        // We assume that the unit IN is PPB as the sensor provide only in PPB and PPM
-        // depending on the type of sensor (METAL or BLACK_BAKELITE)
-        // So, convert PPB to PPM
-        return input / 1000.0;
-      case PPB :
-        // We assume that the unit IN is PPM as the sensor provide only in PPB and PPM
-        // depending on the type of sensor (METAL or BLACK_BAKELITE)
-        // So, convert PPM to PPB
-        return input * 1000.0;
-      case MG_M3 :
-        if(unitIn == PPM) {
-          concentration = input;
-        } else {
-          concentration = input / 1000.0;
-        }
-        return concentration * 48.0 / 22.71108;
-      case UG_M3 :
-        if(unitIn == PPB) {
-          concentration = input;
-        } else {
-          concentration = input * 1000.0;
-        }
-        return concentration * 48.0 / 22.71108;
-      default :
-        return input;
-    }
- }
+  }
+}
 
  /**
   * Calibrate the basic values (R0 and time to read)
   */
-  void MQ131::calibrate() {
-    // Take care of the last Rs value read on the sensor
-    // (forget the decimals)
-    float lastRsValue = 0;
-    // Count how many time we keep the same Rs value in a row
-    int countReadInRow = 0;
-    // Count how long we have to wait to have consistent value
-    int count = 0;
+void MQ131::calibrate() {
+  // Take care of the last Rs value read on the sensor
+  // (forget the decimals)
+  float lastRsValue = 0;
+  // Count how many time we keep the same Rs value in a row
+  int countReadInRow = 0;
+  // Count how long we have to wait to have consistent value
+  int count = 0;
 
-    // Start heater
-    startHeater();
+  // Start heater
+  startHeater();
 
-    int timeToReadConsistency = -1;
-    switch(model) {
-      case LOW_CONCENTRATION :
-        timeToReadConsistency = 15;
-        break;
-      case HIGH_CONCENTRATION :
-        timeToReadConsistency = 20;
-    }
-
-    while(countReadInRow <= timeToReadConsistency) {
-      float value = readRs();
-      if((int)lastRsValue != (int)value) {
-        lastRsValue = value;
-        countReadInRow = 0;
-      } else {
-        countReadInRow++;
-      }
-      count++;
-      delay(1000);
-    }
-
-    // Stop heater
-    stopHeater();
-
-    // We have our R0 and our time to read
-    setR0(lastRsValue);
-    setTimeToRead(count);
+  int timeToReadConsistency = -1;
+  switch(model) {
+    case LOW_CONCENTRATION :
+      timeToReadConsistency = 15;
+      break;
+    case HIGH_CONCENTRATION :
+      timeToReadConsistency = 20;
+      break;
   }
+
+  while(countReadInRow <= timeToReadConsistency) {
+    float value = readRs();
+    if((int)lastRsValue != (int)value) {
+      lastRsValue = value;
+      countReadInRow = 0;
+    } else {
+      countReadInRow++;
+    }
+    count++;
+    delay(1000);
+  }
+
+  // Stop heater
+  stopHeater();
+
+  // We have our R0 and our time to read
+  setR0(lastRsValue);
+  setTimeToRead(count);
+}
 
  /**
   * Store R0 value (come from calibration or set by user)
