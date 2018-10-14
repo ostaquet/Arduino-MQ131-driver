@@ -11,19 +11,6 @@
 /**
  * Init core variables
  */
- MQ131::MQ131(int _pinPower, int _pinSensor, MQ131Model _model) {
- 	// Setup the model
- 	model = _model;
-
- 	// Store the pin info
- 	pinPower = _pinPower;
- 	pinSensor = _pinSensor;
-
- 	// Setup pin mode
- 	pinMode(pinPower, OUTPUT);
- 	pinMode(pinSensor, INPUT);
- }
-
  MQ131::MQ131(int _pinPower, int _pinSensor, MQ131Model _model, int _RL) {
  	// Setup the model
  	model = _model;
@@ -32,6 +19,18 @@
  	pinPower = _pinPower;
  	pinSensor = _pinSensor;
  	valueRL = _RL;
+
+  // Setup default calibration value
+  switch(model) {
+    case LOW_CONCENTRATION :
+      setR0(83090.91);
+      setTimeToRead(446);
+      break;
+    case HIGH_CONCENTRATION :
+      setR0(385.40);
+      setTimeToRead(80);
+      break;
+  }
 
  	// Setup pin mode
  	pinMode(pinPower, OUTPUT);
@@ -57,7 +56,7 @@
  */
  void MQ131::startHeater() {
  	digitalWrite(pinPower, HIGH);
- 	millisLastStart = millis();
+ 	secLastStart = millis()/1000;
  }
 
 /**
@@ -65,11 +64,11 @@
  */
  bool MQ131::isTimeToRead() {
  	// Check if the heater has been started...
- 	if(millisLastStart < 0) {
+ 	if(secLastStart < 0) {
  		return false;
  	}
  	// OK, check if it's the time to read based on calibration parameters
- 	if(millis() >= millisLastStart + getTimeToRead()) {
+ 	if(millis()/1000 >= secLastStart + getTimeToRead()) {
  		return true;
  	}
  	return false;
@@ -80,22 +79,22 @@
  */
  void MQ131::stopHeater() {
  	digitalWrite(pinPower, LOW);
- 	millisLastStart = -1;
+ 	secLastStart = -1;
  }
 
 /**
  * Get parameter time to read
  */
  long MQ131::getTimeToRead() {
- 	return millisToRead;
+ 	return secToRead;
  }
 
 /**
  * Set parameter time to read (for calibration or to recall
  * calibration from previous run)
  */
- void MQ131::setTimeToRead(long millis) {
- 	millisToRead = millis;
+ void MQ131::setTimeToRead(long sec) {
+ 	secToRead = sec;
  }
 
 /**
@@ -145,69 +144,118 @@
  	return -0.0103 * temperatureCelsuis + 1.1507;
  }
 
-/**
- * Get gas concentration for NOx in ppm
- */
- float MQ131::readNOx() {
- 	// If no value Rs read or metal model (no curves for NOx)
- 	if(lastValueRs < 0 || model == METAL) {
- 		return 0.0;
- 	}
-
- 	// Compute the ratio Rs/R0 and apply the environmental correction
- 	float ratio = lastValueRs / valueR0 * getEnvCorrectRatio();
-
- 	// Use the equation to compute the NOx concentration in ppm
- 	// R^2 = 0.997
- 	float ppm = 456.23 * pow(ratio, -2.204);
- 	return ppm;
- }
-
- /**
- * Get gas concentration for CL2 in ppm
- */
- float MQ131::readCL2() {
- 	// If no value Rs read or metal model (no curves for CL2)
- 	if(lastValueRs < 0 || model == METAL) {
- 		return 0.0;
- 	}
-
- 	// Compute the ratio Rs/R0 and apply the environmental correction
- 	float ratio = lastValueRs / valueR0 * getEnvCorrectRatio();
-
- 	// Use the equation to compute the CL2 concentration in ppm
- 	// R^2 = 0.9897
- 	float ppm = 48.313 * pow(ratio, -1.179);
- 	return ppm;
- }
-
  /**
  * Get gas concentration for O3 in ppm
  */
- float MQ131::readO3() {
+ float MQ131::getO3(MQ131Unit unit) {
  	// If no value Rs read, return 0.0
  	if(lastValueRs < 0) {
  		return 0.0;
  	}
 
- 	// Compute the ratio Rs/R0 and apply the environmental correction
- 	float ratio = lastValueRs / valueR0 * getEnvCorrectRatio();
+  float ratio = 0.0;
 
  	switch(model) {
- 		case BLACK_BAKELITE :
+ 		case LOW_CONCENTRATION :
  			// Use the equation to compute the O3 concentration in ppm
  			// R^2 = 0.9987
- 			return 24.049 * pow(ratio, -1.139);
- 		case METAL :
+      // Compute the ratio Rs/R0 and apply the environmental correction
+      ratio = lastValueRs / valueR0 * getEnvCorrectRatio();
+      return convert(9.4783 * pow(ratio, 2.3348), PPB, unit);
+ 		case HIGH_CONCENTRATION :
  			// Use the equation to compute the O3 concentration in ppm
  			// R^2 = 0.99
- 			return 8.1399 * pow(ratio, 2.3297);
+      // Compute the ratio Rs/R0 and apply the environmental correction
+      ratio = lastValueRs / valueR0 * getEnvCorrectRatio();
+      return convert(8.1399 * pow(ratio, 2.3297), PPM, unit);
  		default :
  			return 0.0;
  	}
-
- 	
  }
+
+ /**
+  * Convert gas unit of gas concentration
+  */
+ float MQ131::convert(float input, MQ131Unit unitIn, MQ131Unit unitOut) {
+    if(unitIn == unitOut) {
+      return input;
+    }
+
+    float concentration = 0;
+
+    switch(unitOut) {
+      case PPM :
+        // We assume that the unit IN is PPB as the sensor provide only in PPB and PPM
+        // depending on the type of sensor (METAL or BLACK_BAKELITE)
+        // So, convert PPB to PPM
+        return input / 1000.0;
+      case PPB :
+        // We assume that the unit IN is PPM as the sensor provide only in PPB and PPM
+        // depending on the type of sensor (METAL or BLACK_BAKELITE)
+        // So, convert PPM to PPB
+        return input * 1000.0;
+      case MG_M3 :
+        if(unitIn == PPM) {
+          concentration = input;
+        } else {
+          concentration = input / 1000.0;
+        }
+        return concentration * 48.0 / 22.71108;
+      case UG_M3 :
+        if(unitIn == PPB) {
+          concentration = input;
+        } else {
+          concentration = input * 1000.0;
+        }
+        return concentration * 48.0 / 22.71108;
+      default :
+        return input;
+    }
+ }
+
+ /**
+  * Calibrate the basic values (R0 and time to read)
+  */
+  void MQ131::calibrate() {
+    // Take care of the last Rs value read on the sensor
+    // (forget the decimals)
+    float lastRsValue = 0;
+    // Count how many time we keep the same Rs value in a row
+    int countReadInRow = 0;
+    // Count how long we have to wait to have consistent value
+    int count = 0;
+
+    // Start heater
+    startHeater();
+
+    int timeToReadConsistency = -1;
+    switch(model) {
+      case LOW_CONCENTRATION :
+        timeToReadConsistency = 15;
+        break;
+      case HIGH_CONCENTRATION :
+        timeToReadConsistency = 20;
+    }
+
+    while(countReadInRow <= timeToReadConsistency) {
+      float value = readRs();
+      if((int)lastRsValue != (int)value) {
+        lastRsValue = value;
+        countReadInRow = 0;
+      } else {
+        countReadInRow++;
+      }
+      count++;
+      delay(1000);
+    }
+
+    // Stop heater
+    stopHeater();
+
+    // We have our R0 and our time to read
+    setR0(lastRsValue);
+    setTimeToRead(count);
+  }
 
  /**
   * Store R0 value (come from calibration or set by user)
