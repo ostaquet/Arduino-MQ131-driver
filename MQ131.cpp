@@ -35,6 +35,9 @@
  	// Setup pin mode
  	pinMode(pinPower, OUTPUT);
  	pinMode(pinSensor, INPUT);
+
+  // Switch off the heater as default status
+  digitalWrite(pinPower, LOW);
  }
 
 /**
