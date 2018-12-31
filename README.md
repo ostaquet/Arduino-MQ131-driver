@@ -9,6 +9,15 @@ Arduino library for ozone gas sensor MQ131
  * This driver is made to control the "naked" [Winsen](https://www.winsen-sensor.com) MQ131. The driver is able to pilot the [low concentration version](https://github.com/ostaquet/Arduino-MQ131-driver/blob/master/datasheet/MQ131-low-concentration.pdf) and the [high concentration version](https://github.com/ostaquet/Arduino-MQ131-driver/blob/master/datasheet/MQ131-high-concentration.pdf).
  * To measure the air quality (e.g. pollution), it's better to use the low concentration MQ131 because the high concentration is not accurate enough for low concentration.
  
+## How to install the library?
+ 1. Click on *Clone or download* on GitHub
+ 2. Choose *Download ZIP*
+ 3. Open Arduino IDE
+ 4. In the menu *Sketch* -> *Include Library* -> *Add .ZIP Library*
+ 5. Select the downloaded file or folder (if automatically uncompress)
+ 6. Restart Arduino IDE
+ 7. Enjoy!
+ 
 ## Circuit
  * Heater is controlled by NPN transistor via the control pin (on schema pin 2, yellow connector)
  * Result of the sensor is read through analog with RL of 10kΩ (on schema pin A0, green connector)
