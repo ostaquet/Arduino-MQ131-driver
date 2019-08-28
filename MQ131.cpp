@@ -9,9 +9,22 @@
  #include "MQ131.h"
 
 /**
+ * Constructor, nothing special to do
+ */
+MQ131Class::MQ131Class(int _RL) {
+  valueRL = _RL;
+}
+
+/**
+ * Destructor, nothing special to do
+ */
+MQ131Class::~MQ131Class() {
+}
+
+/**
  * Init core variables
  */
- MQ131::MQ131(int _pinPower, int _pinSensor, MQ131Model _model, int _RL) {
+ void MQ131Class::begin(int _pinPower, int _pinSensor, MQ131Model _model, int _RL) {
  	// Setup the model
  	model = _model;
 
@@ -23,12 +36,12 @@
   // Setup default calibration value
   switch(model) {
     case LOW_CONCENTRATION :
-      setR0(110470.60);
-      setTimeToRead(72);
+      setR0(MQ131_DEFAULT_LO_CONCENTRATION_R0);
+      setTimeToRead(MQ131_DEFAULT_LO_CONCENTRATION_TIME2READ);
       break;
     case HIGH_CONCENTRATION :
-      setR0(385.40);
-      setTimeToRead(80);
+      setR0(MQ131_DEFAULT_HI_CONCENTRATION_R0);
+      setTimeToRead(MQ131_DEFAULT_HI_CONCENTRATION_TIME2READ);
       break;
   }
 
@@ -45,7 +58,7 @@
  * The function gives back the hand only at the end
  * of the read cycle!
  */
- void MQ131::begin() {
+ void MQ131Class::sample() {
  	startHeater();
  	while(!isTimeToRead()) {
  		delay(1000);
@@ -57,7 +70,7 @@
 /**
  * Start the heater
  */
- void MQ131::startHeater() {
+ void MQ131Class::startHeater() {
  	digitalWrite(pinPower, HIGH);
  	secLastStart = millis()/1000;
  }
@@ -65,7 +78,7 @@
 /**
  * Check if it is the right time to read the Rs value
  */
- bool MQ131::isTimeToRead() {
+ bool MQ131Class::isTimeToRead() {
  	// Check if the heater has been started...
  	if(secLastStart < 0) {
  		return false;
@@ -80,7 +93,7 @@
 /**
  * Stop the heater
  */
- void MQ131::stopHeater() {
+ void MQ131Class::stopHeater() {
  	digitalWrite(pinPower, LOW);
  	secLastStart = -1;
  }
@@ -88,7 +101,7 @@
 /**
  * Get parameter time to read
  */
- long MQ131::getTimeToRead() {
+ long MQ131Class::getTimeToRead() {
  	return secToRead;
  }
 
@@ -96,14 +109,14 @@
  * Set parameter time to read (for calibration or to recall
  * calibration from previous run)
  */
- void MQ131::setTimeToRead(long sec) {
+ void MQ131Class::setTimeToRead(long sec) {
  	secToRead = sec;
  }
 
 /**
  * Read Rs value
  */
- float MQ131::readRs() {
+ float MQ131Class::readRs() {
  	// Read the value
  	int valueSensor = analogRead(pinSensor);
  	// Compute the voltage on load resistance (for 5V Arduino)
@@ -116,7 +129,7 @@
 /**
  * Set environmental values
  */
- void MQ131::setEnv(int tempCels, int humPc) {
+ void MQ131Class::setEnv(int tempCels, int humPc) {
  	temperatureCelsuis = tempCels;
  	humidityPercent = humPc;
  }
@@ -125,7 +138,7 @@
  * Get correction to apply on Rs depending on environmental
  * conditions
  */
- float MQ131::getEnvCorrectRatio() {
+ float MQ131Class::getEnvCorrectRatio() {
  	// Select the right equation based on humidity
  	// If default value, ignore correction ratio
  	if(humidityPercent == 60 && temperatureCelsuis == 20) {
@@ -150,7 +163,7 @@
  /**
  * Get gas concentration for O3 in ppm
  */
- float MQ131::getO3(MQ131Unit unit) {
+ float MQ131Class::getO3(MQ131Unit unit) {
  	// If no value Rs read, return 0.0
  	if(lastValueRs < 0) {
  		return 0.0;
@@ -179,7 +192,7 @@
  /**
   * Convert gas unit of gas concentration
   */
- float MQ131::convert(float input, MQ131Unit unitIn, MQ131Unit unitOut) {
+ float MQ131Class::convert(float input, MQ131Unit unitIn, MQ131Unit unitOut) {
   if(unitIn == unitOut) {
     return input;
   }
@@ -219,7 +232,7 @@
  /**
   * Calibrate the basic values (R0 and time to read)
   */
-void MQ131::calibrate() {
+void MQ131Class::calibrate() {
   // Take care of the last Rs value read on the sensor
   // (forget the decimals)
   float lastRsValue = 0;
@@ -231,18 +244,13 @@ void MQ131::calibrate() {
   // Start heater
   startHeater();
 
-  int timeToReadConsistency = -1;
-  switch(model) {
-    case LOW_CONCENTRATION :
-      timeToReadConsistency = 15;
-      break;
-    case HIGH_CONCENTRATION :
-      timeToReadConsistency = 20;
-      break;
-  }
+  int timeToReadConsistency = MQ131_DEFAULT_STABLE_CYCLE;
 
   while(countReadInRow <= timeToReadConsistency) {
     float value = readRs();
+
+    Serial.println(value);
+    
     if((int)lastRsValue != (int)value) {
       lastRsValue = value;
       countReadInRow = 0;
@@ -264,13 +272,15 @@ void MQ131::calibrate() {
  /**
   * Store R0 value (come from calibration or set by user)
   */
-  void MQ131::setR0(float _valueR0) {
+  void MQ131Class::setR0(float _valueR0) {
   	valueR0 = _valueR0;
   }
 
  /**
  * Get R0 value
  */
- float MQ131::getR0() {
+ float MQ131Class::getR0() {
  	return valueR0;
  }
+
+MQ131Class MQ131(MQ131_DEFAULT_RL);

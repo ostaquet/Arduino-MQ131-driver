@@ -12,20 +12,31 @@
 #include <Arduino.h>
 
 // Default values
-#define TEMPERATURE_CELSIUS  20
-#define HUMIDITY_PERCENT 65
+#define MQ131_DEFAULT_RL                            10000             // Default load resistance of 10KOhms
+#define MQ131_DEFAULT_STABLE_CYCLE                  20                // Number of cycles with low deviation to consider
+                                                                      // the calibration as stable and reliable
+#define MQ131_DEFAULT_TEMPERATURE_CELSIUS           20                // Default temperature to correct environmental drift
+#define MQ131_DEFAULT_HUMIDITY_PERCENT              65                // Default humidity to correct environmental drift
+#define MQ131_DEFAULT_LO_CONCENTRATION_R0           110470.60         // Default R0 for low concentration MQ131
+#define MQ131_DEFAULT_LO_CONCENTRATION_TIME2READ    72                // Default time to read before stable signal for low concentration MQ131
+#define MQ131_DEFAULT_HI_CONCENTRATION_R0           385.40            // Default R0 for high concentration MQ131
+#define MQ131_DEFAULT_HI_CONCENTRATION_TIME2READ    80                // Default time to read before stable signal for high concentration MQ131
 
 enum MQ131Model {LOW_CONCENTRATION, HIGH_CONCENTRATION};
 enum MQ131Unit {PPM, PPB, MG_M3, UG_M3};
 
-class MQ131 {
+class MQ131Class {
 	public:
+    // Constructor
+    MQ131Class(int _RL);
+    virtual ~MQ131Class();
+  
 		// Initialize the driver
-		MQ131(int _pinPower, int _pinSensor, MQ131Model _model, int _RL);
+		void begin(int _pinPower, int _pinSensor, MQ131Model _model, int _RL);
 
 		// Manage a full cycle with delay() without giving the hand back to
 		// the main loop (delay() function included)
-		void begin();								
+		void sample();								
 
 		// Read the concentration of gas
 		// The environment should be set for accurate results
@@ -55,7 +66,8 @@ class MQ131 {
 		// For further use of calibration values, please use getTimeToRead() and getR0()
 		void calibrate();
 
-	protected:
+	private:
+    // Internal helpers
 		// Internal function to manage the heater
 		void startHeater();
 		bool isTimeToRead();
@@ -70,7 +82,7 @@ class MQ131 {
     // Convert gas unit of gas concentration
     float convert(float input, MQ131Unit unitIn, MQ131Unit unitOut);
 
-	private:
+    // Internal variables
 		// Model of MQ131
 		MQ131Model model;
 
@@ -90,8 +102,10 @@ class MQ131 {
 		float lastValueRs = -1;
 
 		// Parameters for environment
-		int temperatureCelsuis = TEMPERATURE_CELSIUS;
-		int humidityPercent = HUMIDITY_PERCENT;
+		int temperatureCelsuis = MQ131_DEFAULT_TEMPERATURE_CELSIUS;
+		int humidityPercent = MQ131_DEFAULT_HUMIDITY_PERCENT;
 };
+
+extern MQ131Class MQ131;
 
 #endif // _MQ131_H_
