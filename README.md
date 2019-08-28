@@ -6,6 +6,7 @@ Arduino library for ozone gas sensor MQ131
 ## To know before starting...
  * The MQ131 is a [semiconductor gas sensor](https://en.wikipedia.org/wiki/Gas_detector#Semiconductor) composed by a heater circuit and a sensor circuit.
  * Heater consumes at least 150 mA. So, __don't connect it directly on a pin of the Arduino__.
+ * It is important to respect the pinout of the sensor. If you put Vcc on the sensor and not on the heater, __you could damage your sensor irreversibly.__ 
  * Sensor MQ131 requires minimum 48h preheat time before giving consistent results (also called "burn-in" time)
  * There are two different MQ131; a black bakelite sensor for low concentration of ozone and a metal sensor for high concentration of ozone.
  * This driver is made to control the "naked" [Winsen](https://www.winsen-sensor.com) MQ131. The driver is able to pilot the [low concentration version](https://github.com/ostaquet/Arduino-MQ131-driver/blob/master/datasheet/MQ131-low-concentration.pdf) and the [high concentration version](https://github.com/ostaquet/Arduino-MQ131-driver/blob/master/datasheet/MQ131-high-concentration.pdf).
