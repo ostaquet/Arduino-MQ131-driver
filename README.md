@@ -34,43 +34,43 @@ Arduino library for ozone gas sensor MQ131
 ```
 #include "MQ131.h"
 
-// Init the sensor
-// - Heater control on pin 2
-// - Sensor analog read on pin A0
-// - Model LOW_CONCENTRATION
-// - Load resistance RL of 10KOhms (10000 Ohms)
-MQ131 sensor(2,A0, LOW_CONCENTRATION, 10000);
-
 void setup() {
   Serial.begin(115200);
 
+  // Init the sensor
+  // - Heater control on pin 2
+  // - Sensor analog read on pin A0
+  // - Model LOW_CONCENTRATION
+  // - Load resistance RL of 10KOhms (10000 Ohms)
+  MQ131.begin(2,A0, LOW_CONCENTRATION, 10000);  
+
   Serial.println("Calibration in progress...");
-
-  sensor.calibrate();
-
+  
+  MQ131.calibrate();
+  
   Serial.println("Calibration done!");
   Serial.print("R0 = ");
-  Serial.print(sensor.getR0());
+  Serial.print(MQ131.getR0());
   Serial.println(" Ohms");
   Serial.print("Time to heat = ");
-  Serial.print(sensor.getTimeToRead());
+  Serial.print(MQ131.getTimeToRead());
   Serial.println(" s");
 }
 
 void loop() {
-  sensor.begin();
-
+  Serial.println("Sampling...");
+  MQ131.sample();
   Serial.print("Concentration O3 : ");
-  Serial.print(sensor.getO3(PPM));
+  Serial.print(MQ131.getO3(PPM));
   Serial.println(" ppm");
   Serial.print("Concentration O3 : ");
-  Serial.print(sensor.getO3(PPB));
+  Serial.print(MQ131.getO3(PPB));
   Serial.println(" ppb");
   Serial.print("Concentration O3 : ");
-  Serial.print(sensor.getO3(MG_M3));
+  Serial.print(MQ131.getO3(MG_M3));
   Serial.println(" mg/m3");
   Serial.print("Concentration O3 : ");
-  Serial.print(sensor.getO3(UG_M3));
+  Serial.print(MQ131.getO3(UG_M3));
   Serial.println(" ug/m3");
 
   delay(60000);
@@ -97,44 +97,44 @@ The driver has to be initialized with 4 parameters:
  * Model of sensor LOW_CONCENTRATION or HIGH_CONCENTRATION (example: LOW_CONCENTRATION)
  * Value of load resistance in Ohms (example: 10000 Ohms)
 ```
-MQ131 sensor(2,A0, LOW_CONCENTRATION, 10000);
+MQ131.begin(2,A0, LOW_CONCENTRATION, 10000);
 ```
 
 Before using the driver, it's better to calibrate it. You can do that through the function calibrate(). The best is to calibrate the sensor at 20°C and 65% of humidity in clean fresh air. The calibration adjusts 2 parameters:
  * The value of the base resistance (R0)
  * The time required to heat the sensor and get consistent readings (Time to read)
 ```
-sensor.calibrate();
+MQ131.calibrate();
 ```
 
 Those calibration values are used for the usage of the sensor as long as the Arduino is not restarted. Nevertheless, you can get the values for your sensor through the getters:
 ```
-sensor.getR0();
-sensor.getTimeToRead();
+MQ131.getR0();
+MQ131.getTimeToRead();
 ```
 
 And set up the values in the initialization of your program through the setters:
 ```
-sensor.setR0(value);
-sensor.setTimeToRead(value);
+MQ131.setR0(value);
+MQ131.setTimeToRead(value);
 ```
 
-In order to get the values from the sensor, you just start the process with the begin() function. Please notice that the function locks the flow. If you want to do additional processing during the heating/reading process, you should extend the class. The methods are protected and the driver can be extended easily.
+In order to get the values from the sensor, you just start the process with the `sample()` function. **Please notice that the function locks the flow.** If you want to do additional processing during the heating/reading process, you should extend the class. The methods are protected and the driver can be extended easily.
 ```
-sensor.begin();
-```
-
-The reading of the values is done through the getO3() function. Based on the parameter, you can ask to receive the result in ppm (PPM), ppb (PPB), mg/m3 (MG_M3) or µg/m3 (UG_M3).
-```
-sensor.getO3(PPM);
-sensor.getO3(PPB);
-sensor.getO3(MG_M3);
-sensor.getO3(UG_M3);
+MQ131.sample();
 ```
 
-The sensor is sensible to environmental variation (temperature and humidity). If you want to have correct values, you should set the temperature and the humidity before the call to getO3() function with the function setEnv(). Temperature are in °C and humidity in %. The values should come from another sensor like the DHT22.
+The reading of the values is done through the `getO3()` function. Based on the parameter, you can ask to receive the result in ppm (PPM), ppb (PPB), mg/m3 (MG_M3) or µg/m3 (UG_M3).
 ```
-sensor.setEnv(23, 70);
+MQ131.getO3(PPM);
+MQ131.getO3(PPB);
+MQ131.getO3(MG_M3);
+MQ131.getO3(UG_M3);
+```
+
+The sensor is sensible to environmental variation (temperature and humidity). If you want to have correct values, you should set the temperature and the humidity before the call to `getO3()` function with the function setEnv(). Temperature are in °C and humidity in %. The values should come from another sensor like the DHT22.
+```
+MQ131.setEnv(23, 70);
 ```
 
 
