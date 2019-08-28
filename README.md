@@ -28,6 +28,8 @@ Arduino library for ozone gas sensor MQ131
 
 ![Schematics](img/MQ131_schem.png)
 
+![MQ131 pinout](img/MQ131_pinout.png)
+
 ## Basic program to use your MQ131
 ```
 #include "MQ131.h"
