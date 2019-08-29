@@ -95,13 +95,13 @@ Concentration O3 : 25.14 ug/m3
 The driver has to be initialized with 4 parameters:
  * Pin to control the heater power (example: 2)
  * Pin to measure the analog output (example: A0)
- * Model of sensor LOW_CONCENTRATION or HIGH_CONCENTRATION (example: LOW_CONCENTRATION)
+ * Model of sensor `LOW_CONCENTRATION` or `HIGH_CONCENTRATION` (example: `LOW_CONCENTRATION`)
  * Value of load resistance in Ohms (example: 10000 Ohms)
 ```
 MQ131.begin(2,A0, LOW_CONCENTRATION, 10000);
 ```
 
-Before using the driver, it's better to calibrate it. You can do that through the function calibrate(). The best is to calibrate the sensor at 20°C and 65% of humidity in clean fresh air. The calibration adjusts 2 parameters:
+Before using the driver, it's better to calibrate it. You can do that through the function `calibrate()`. The best is to calibrate the sensor at 20°C and 65% of humidity in clean fresh air. The calibration adjusts 2 parameters:
  * The value of the base resistance (R0)
  * The time required to heat the sensor and get consistent readings (Time to read)
 ```
@@ -125,7 +125,7 @@ In order to get the values from the sensor, you just start the process with the 
 MQ131.sample();
 ```
 
-The reading of the values is done through the `getO3()` function. Based on the parameter, you can ask to receive the result in ppm (PPM), ppb (PPB), mg/m3 (MG_M3) or µg/m3 (UG_M3).
+The reading of the values is done through the `getO3()` function. Based on the parameter, you can ask to receive the result in ppm (`PPM`), ppb (`PPB`), mg/m3 (`MG_M3`) or µg/m3 (`UG_M3`).
 ```
 MQ131.getO3(PPM);
 MQ131.getO3(PPB);
@@ -133,7 +133,7 @@ MQ131.getO3(MG_M3);
 MQ131.getO3(UG_M3);
 ```
 
-The sensor is sensible to environmental variation (temperature and humidity). If you want to have correct values, you should set the temperature and the humidity before the call to `getO3()` function with the function setEnv(). Temperature are in °C and humidity in %. The values should come from another sensor like the DHT22.
+The sensor is sensible to environmental variation (temperature and humidity). If you want to have correct values, you should set the temperature and the humidity before the call to `getO3()` function with the function `setEnv()`. Temperature are in °C and humidity in %. The values should come from another sensor like the DHT22.
 ```
 MQ131.setEnv(23, 70);
 ```
