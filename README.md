@@ -102,10 +102,10 @@ The driver has to be initialized with 4 parameters:
  * Model of sensor `LOW_CONCENTRATION` or `HIGH_CONCENTRATION` (example: `LOW_CONCENTRATION`)
  * Value of load resistance in Ohms (example: 1000000 Ohms)
 ```
-MQ131.begin(2,A0, LOW_CONCENTRATION, 10000);
+MQ131.begin(2,A0, LOW_CONCENTRATION, 1000000);
 ```
 
-Before using the driver, it's better to calibrate it. You can do that through the function `calibrate()`. The best is to calibrate the sensor at 20°C and 65% of humidity in clean fresh air. If you need some log on the console, mention the serial in the function `begin()` (example by using the standard Serial: `MQ131.begin(2,A0, LOW_CONCENTRATION, 10000, (Stream *)&Serial);`).
+Before using the driver, it's better to calibrate it. You can do that through the function `calibrate()`. The best is to calibrate the sensor at 20°C and 65% of humidity in clean fresh air. If you need some log on the console, mention the serial in the function `begin()` (example by using the standard Serial: `MQ131.begin(2,A0, LOW_CONCENTRATION, 1000000, (Stream *)&Serial);`).
 
 The calibration adjusts 2 parameters:
  * The value of the base resistance (R0)
