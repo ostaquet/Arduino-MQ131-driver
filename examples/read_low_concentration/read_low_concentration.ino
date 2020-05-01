@@ -1,5 +1,5 @@
 /*
- * Calibrate the MQ131 and start sampling every 60 seconds
+ * Sample the ozone concentration every 60 seconds
  * 
  * Example code base on low concentration sensor (black bakelite)
  * and load resistance of 1MOhms
@@ -19,11 +19,7 @@ void setup() {
   // - Load resistance RL of 1MOhms (1000000 Ohms)
   MQ131.begin(2,A0, LOW_CONCENTRATION, 1000000);  
 
-  Serial.println("Calibration in progress...");
-  
-  MQ131.calibrate();
-  
-  Serial.println("Calibration done!");
+  Serial.println("Calibration parameters");
   Serial.print("R0 = ");
   Serial.print(MQ131.getR0());
   Serial.println(" Ohms");

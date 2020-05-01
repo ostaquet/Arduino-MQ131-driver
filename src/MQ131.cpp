@@ -6,12 +6,12 @@
  * Last version available on https://github.com/ostaquet/Arduino-MQ131-driver *
  ******************************************************************************/
 
- #include "MQ131.h"
+#include "MQ131.h"
 
 /**
  * Constructor, nothing special to do
  */
-MQ131Class::MQ131Class(int _RL) {
+MQ131Class::MQ131Class(uint32_t _RL) {
   valueRL = _RL;
 }
 
@@ -24,7 +24,11 @@ MQ131Class::~MQ131Class() {
 /**
  * Init core variables
  */
- void MQ131Class::begin(int _pinPower, int _pinSensor, MQ131Model _model, int _RL) {
+ void MQ131Class::begin(uint8_t _pinPower, uint8_t _pinSensor, MQ131Model _model, uint32_t _RL, Stream* _debugStream) { 
+  // Define if debug is requested
+  enableDebug = _debugStream != NULL;
+  debugStream = _debugStream;
+  
  	// Setup the model
  	model = _model;
 
@@ -84,7 +88,7 @@ MQ131Class::~MQ131Class() {
  		return false;
  	}
  	// OK, check if it's the time to read based on calibration parameters
- 	if(millis()/1000 >= secLastStart + getTimeToRead()) {
+ 	if(millis() / 1000 >= secLastStart + getTimeToRead()) {
  		return true;
  	}
  	return false;
@@ -109,7 +113,7 @@ MQ131Class::~MQ131Class() {
  * Set parameter time to read (for calibration or to recall
  * calibration from previous run)
  */
- void MQ131Class::setTimeToRead(long sec) {
+ void MQ131Class::setTimeToRead(uint32_t sec) {
  	secToRead = sec;
  }
 
@@ -118,7 +122,7 @@ MQ131Class::~MQ131Class() {
  */
  float MQ131Class::readRs() {
  	// Read the value
- 	int valueSensor = analogRead(pinSensor);
+ 	uint16_t valueSensor = analogRead(pinSensor);
  	// Compute the voltage on load resistance (for 5V Arduino)
  	float vRL = ((float)valueSensor) / 1024.0 * 5.0;
  	// Compute the resistance of the sensor (for 5V Arduino)
@@ -129,7 +133,7 @@ MQ131Class::~MQ131Class() {
 /**
  * Set environmental values
  */
- void MQ131Class::setEnv(int tempCels, int humPc) {
+ void MQ131Class::setEnv(int8_t tempCels, uint8_t humPc) {
  	temperatureCelsuis = tempCels;
  	humidityPercent = humPc;
  }
@@ -237,21 +241,34 @@ void MQ131Class::calibrate() {
   // (forget the decimals)
   float lastRsValue = 0;
   // Count how many time we keep the same Rs value in a row
-  int countReadInRow = 0;
+  uint8_t countReadInRow = 0;
   // Count how long we have to wait to have consistent value
-  int count = 0;
+  uint8_t count = 0;
+
+  // Get some info
+  if(enableDebug) {
+    debugStream->println(F("MQ131 : Starting calibration..."));
+    debugStream->println(F("MQ131 : Enable heater"));
+    debugStream->print(F("MQ131 : Stable cycles required : "));
+    debugStream->print(MQ131_DEFAULT_STABLE_CYCLE);
+    debugStream->println(F(" (compilation parameter MQ131_DEFAULT_STABLE_CYCLE)"));
+  }
 
   // Start heater
   startHeater();
 
-  int timeToReadConsistency = MQ131_DEFAULT_STABLE_CYCLE;
+  uint8_t timeToReadConsistency = MQ131_DEFAULT_STABLE_CYCLE;
 
   while(countReadInRow <= timeToReadConsistency) {
     float value = readRs();
 
-    Serial.println(value);
+    if(enableDebug) {
+      debugStream->print(F("MQ131 : Rs read = "));
+      debugStream->print((uint32_t)value);
+      debugStream->println(F(" Ohms"));
+    }
     
-    if((int)lastRsValue != (int)value) {
+    if((uint32_t)lastRsValue != (uint32_t)value) {
       lastRsValue = value;
       countReadInRow = 0;
     } else {
@@ -259,6 +276,13 @@ void MQ131Class::calibrate() {
     }
     count++;
     delay(1000);
+  }
+
+  if(enableDebug) {
+    debugStream->print(F("MQ131 : Stabilisation after "));
+    debugStream->print(count);
+    debugStream->println(F(" seconds"));
+    debugStream->println(F("MQ131 : Stop heater and store calibration parameters"));
   }
 
   // Stop heater

@@ -12,14 +12,14 @@
 #include <Arduino.h>
 
 // Default values
-#define MQ131_DEFAULT_RL                            10000             // Default load resistance of 10KOhms
-#define MQ131_DEFAULT_STABLE_CYCLE                  20                // Number of cycles with low deviation to consider
+#define MQ131_DEFAULT_RL                            1000000           // Default load resistance of 1MOhms
+#define MQ131_DEFAULT_STABLE_CYCLE                  15                // Number of cycles with low deviation to consider
                                                                       // the calibration as stable and reliable
 #define MQ131_DEFAULT_TEMPERATURE_CELSIUS           20                // Default temperature to correct environmental drift
 #define MQ131_DEFAULT_HUMIDITY_PERCENT              65                // Default humidity to correct environmental drift
-#define MQ131_DEFAULT_LO_CONCENTRATION_R0           110470.60         // Default R0 for low concentration MQ131
-#define MQ131_DEFAULT_LO_CONCENTRATION_TIME2READ    72                // Default time to read before stable signal for low concentration MQ131
-#define MQ131_DEFAULT_HI_CONCENTRATION_R0           385.40            // Default R0 for high concentration MQ131
+#define MQ131_DEFAULT_LO_CONCENTRATION_R0           1917.22           // Default R0 for low concentration MQ131
+#define MQ131_DEFAULT_LO_CONCENTRATION_TIME2READ    80                // Default time to read before stable signal for low concentration MQ131
+#define MQ131_DEFAULT_HI_CONCENTRATION_R0           235.00            // Default R0 for high concentration MQ131
 #define MQ131_DEFAULT_HI_CONCENTRATION_TIME2READ    80                // Default time to read before stable signal for high concentration MQ131
 
 enum MQ131Model {LOW_CONCENTRATION, HIGH_CONCENTRATION};
@@ -28,11 +28,11 @@ enum MQ131Unit {PPM, PPB, MG_M3, UG_M3};
 class MQ131Class {
 	public:
     // Constructor
-    MQ131Class(int _RL);
+    MQ131Class(uint32_t _RL);
     virtual ~MQ131Class();
   
 		// Initialize the driver
-		void begin(int _pinPower, int _pinSensor, MQ131Model _model, int _RL);
+		void begin(uint8_t _pinPower, uint8_t _pinSensor, MQ131Model _model, uint32_t _RL, Stream* _debugStream = NULL);
 
 		// Manage a full cycle with delay() without giving the hand back to
 		// the main loop (delay() function included)
@@ -45,13 +45,13 @@ class MQ131Class {
 		// Define environment
 		// Define the temperature (in Celsius) and humidity (in %) to adjust the
 		// output values based on typical characteristics of the MQ131
-		void setEnv(int tempCels, int humPc);
+		void setEnv(int8_t tempCels, uint8_t humPc);
 
 		// Setup calibration: Time to read
 		// Define the time to read after started the heater
 		// Get function also available to know the value after calibrate()
 		// (the time to read is calculated automatically after calibration)
-		void setTimeToRead(long sec);
+		void setTimeToRead(uint32_t sec);
 		long getTimeToRead();
 
 		// Setup calibration: R0
@@ -86,14 +86,18 @@ class MQ131Class {
 		// Model of MQ131
 		MQ131Model model;
 
+    // Serial console for the debug
+    Stream* debugStream = NULL;
+    bool enableDebug = false;
+
 		// Details about the circuit: pins and load resistance value
-		int pinPower = -1;
-		int pinSensor = -1;
-		long valueRL = -1;
+		uint8_t pinPower = -1;
+		uint8_t pinSensor = -1;
+		uint16_t valueRL = -1;
 
 		// Timer to keep track of the pre-heating
-		long secLastStart = -1;
-		long secToRead = -1;
+		uint32_t secLastStart = -1;
+		uint32_t secToRead = -1;
 
 		// Calibration of R0
 		float valueR0 = -1;
@@ -102,8 +106,8 @@ class MQ131Class {
 		float lastValueRs = -1;
 
 		// Parameters for environment
-		int temperatureCelsuis = MQ131_DEFAULT_TEMPERATURE_CELSIUS;
-		int humidityPercent = MQ131_DEFAULT_HUMIDITY_PERCENT;
+		int8_t temperatureCelsuis = MQ131_DEFAULT_TEMPERATURE_CELSIUS;
+		uint8_t humidityPercent = MQ131_DEFAULT_HUMIDITY_PERCENT;
 };
 
 extern MQ131Class MQ131;

@@ -22,9 +22,13 @@ Arduino library for ozone gas sensor MQ131
  7. Enjoy!
  
 ## Circuit
- * Heater is controlled by NPN transistor via the control pin (on schema pin 2, yellow connector)
- * Result of the sensor is read through analog with RL of 10kΩ (on schema pin A0, green connector)
+ * Heater is controlled by MOSFET N-channel via the control pin (on schema pin 2, yellow connector)
+ * Result of the sensor is read through analog with RL of 1MΩ (on schema pin A0, green connector)
  
+Remarks:
+ * The MOSFET is a IRF840 but any N-channel MOSFET that can be controlled by 5V is OK.
+ * The load resistance (RL) can be different than 1MΩ (tested also with 10kΩ) but don't forget to calibrate the R0 and time to heat.
+
 ![Breadboard schematics](extras/img/MQ131_bb.png)
 
 ![MQ131 pinout](extras/img/MQ131_pinout.png)
@@ -42,8 +46,8 @@ void setup() {
   // - Heater control on pin 2
   // - Sensor analog read on pin A0
   // - Model LOW_CONCENTRATION
-  // - Load resistance RL of 10KOhms (10000 Ohms)
-  MQ131.begin(2,A0, LOW_CONCENTRATION, 10000);  
+  // - Load resistance RL of 1MOhms (1000000 Ohms)
+  MQ131.begin(2,A0, LOW_CONCENTRATION, 1000000);  
 
   Serial.println("Calibration in progress...");
   
@@ -82,13 +86,13 @@ The result gives us:
 ```
 Calibration in progress...
 Calibration done!
-R0 = 110470.60 Ohms
-Time to heat = 72 s
+R0 = 1917.22 Ohms
+Time to heat = 80 s
 Sampling...
 Concentration O3 : 0.01 ppm
-Concentration O3 : 11.90 ppb
-Concentration O3 : 0.03 mg/m3
-Concentration O3 : 25.14 ug/m3
+Concentration O3 : 7.95 ppb
+Concentration O3 : 0.02 mg/m3
+Concentration O3 : 16.80 ug/m3
 ```
 
 ## Usage
@@ -96,12 +100,14 @@ The driver has to be initialized with 4 parameters:
  * Pin to control the heater power (example: 2)
  * Pin to measure the analog output (example: A0)
  * Model of sensor `LOW_CONCENTRATION` or `HIGH_CONCENTRATION` (example: `LOW_CONCENTRATION`)
- * Value of load resistance in Ohms (example: 10000 Ohms)
+ * Value of load resistance in Ohms (example: 1000000 Ohms)
 ```
 MQ131.begin(2,A0, LOW_CONCENTRATION, 10000);
 ```
 
-Before using the driver, it's better to calibrate it. You can do that through the function `calibrate()`. The best is to calibrate the sensor at 20°C and 65% of humidity in clean fresh air. The calibration adjusts 2 parameters:
+Before using the driver, it's better to calibrate it. You can do that through the function `calibrate()`. The best is to calibrate the sensor at 20°C and 65% of humidity in clean fresh air. If you need some log on the console, mention the serial in the function `begin()` (example by using the standard Serial: `MQ131.begin(2,A0, LOW_CONCENTRATION, 10000, (Stream *)&Serial);`).
+
+The calibration adjusts 2 parameters:
  * The value of the base resistance (R0)
  * The time required to heat the sensor and get consistent readings (Time to read)
 ```
