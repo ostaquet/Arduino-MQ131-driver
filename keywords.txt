@@ -1,0 +1,20 @@
+# Syntax Coloring Map For Arduino-MQ131-driver
+
+# Datatypes (KEYWORD1)
+MQ131		KEYWORD3
+
+# Methods and Functions (KEYWORD2)
+calibrate	KEYWORD2
+begin		KEYWORD2
+sample		KEYWORD2
+
+# Instances (KEYWORD2)
+
+# Constants (LITERAL1)
+LOW_CONCENTRATION
+HIGH_CONCENTRATION
+PPM
+PPB
+MG_M3
+UG_M3
+
