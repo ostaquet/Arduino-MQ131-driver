@@ -14,9 +14,9 @@ Arduino library for ozone gas sensor MQ131
  
 ## How to install the library?
 The easiest way to install the library is to go to the Library manager of the Arduino IDE and install the library.
- 1. Menu Tools -> Manage Libraries...
- 2. Search for "MQ131"
- 3. Install "MQ131 gas sensor by Olivier Staquet"
+ 1. In the Arduino IDE, go into _Menu Tools_ -> _Manage Libraries..._
+ 2. Search for _MQ131_
+ 3. Install _MQ131 gas sensor by Olivier Staquet_
  
 ## Circuit
  * Heater is controlled by MOSFET N-channel via the control pin (on schema pin 2, yellow connector)
