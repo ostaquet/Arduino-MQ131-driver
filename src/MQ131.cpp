@@ -148,6 +148,7 @@ MQ131Class::~MQ131Class() {
  	// Compute the voltage on load resistance (for 5V Arduino)
  	float vRL = ((float)valueSensor) / 1024.0 * 5.0;
  	// Compute the resistance of the sensor (for 5V Arduino)
+  if(!vRL) return 0.0f; //division by zero prevention
  	float rS = (5.0 / vRL - 1.0) * valueRL;
  	return rS;
  }
