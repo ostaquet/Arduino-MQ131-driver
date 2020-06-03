@@ -146,7 +146,7 @@ MQ131Class::~MQ131Class() {
  	// Read the value
  	uint16_t valueSensor = analogRead(pinSensor);
  	// Compute the voltage on load resistance (for 5V Arduino)
- 	float vRL = ((float)valueSensor) / 1024.0 * 5.0;
+  float vRL = ((float)valueSensor) / 1024.0 * 5.0;
  	// Compute the resistance of the sensor (for 5V Arduino)
   if(!vRL) return 0.0f; //division by zero prevention
  	float rS = (5.0 / vRL - 1.0) * valueRL;
@@ -263,6 +263,7 @@ void MQ131Class::calibrate() {
   // Take care of the last Rs value read on the sensor
   // (forget the decimals)
   float lastRsValue = 0;
+  float lastLastRsValue = 0;
   // Count how many time we keep the same Rs value in a row
   uint8_t countReadInRow = 0;
   // Count how long we have to wait to have consistent value
@@ -291,7 +292,8 @@ void MQ131Class::calibrate() {
       debugStream->println(F(" Ohms"));
     }
     
-    if((uint32_t)lastRsValue != (uint32_t)value) {
+    if((uint32_t)lastRsValue != (uint32_t)value && (uint32_t)lastLastRsValue != (uint32_t)value) {
+      lastLastRsValue = lastRsValue;
       lastRsValue = value;
       countReadInRow = 0;
     } else {
