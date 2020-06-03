@@ -204,13 +204,13 @@ MQ131Class::~MQ131Class() {
  			// R^2 = 0.9987
       // Compute the ratio Rs/R0 and apply the environmental correction
       ratio = lastValueRs / valueR0 * getEnvCorrectRatio();
-      return convert(9.4783 * pow(ratio, 2.3348), PPB, unit);
+      return convert((10.66435681 * pow(ratio, 2.25889394) - 10.66435681), PPB, unit);
  		case HIGH_CONCENTRATION :
  			// Use the equation to compute the O3 concentration in ppm
  			// R^2 = 0.99
       // Compute the ratio Rs/R0 and apply the environmental correction
       ratio = lastValueRs / valueR0 * getEnvCorrectRatio();
-      return convert(8.1399 * pow(ratio, 2.3297), PPM, unit);
+      return convert((8.37768358 * pow(ratio, 2.30375446) - 8.37768358), PPM, unit);
  		default :
  			return 0.0;
   }
