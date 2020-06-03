@@ -90,7 +90,7 @@ MQ131Class::~MQ131Class() {
  		delay(1000);
  	}
  	lastValueRs = readRs();
-  correctedLastValueRs = lastValueRs * getEnvCorrectRatio();
+  correctedLastValueRs = lastValueRs / getEnvCorrectRatio();
  	stopHeater();
  }
 
@@ -324,7 +324,7 @@ void MQ131Class::calibrate() {
   */
   void MQ131Class::setR0(float _valueR0) {
   	valueR0 = _valueR0;
-    correctedValueR0 = _valueR0 * getEnvCorrectRatio();
+    correctedValueR0 = _valueR0 / getEnvCorrectRatio();
   }
 
  /**
