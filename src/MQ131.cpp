@@ -66,7 +66,7 @@ MQ131Class::~MQ131Class() {
       setTimeToRead(MQ131_DEFAULT_LO_CONCENTRATION_TIME2READ);
       break;
     case LH_CONCENTRATION :
-      setR0(MQ131_DEFAULT_LH_CONCENTRATION_R0);
+      setR0(MQ131_DEFAULT_ETC_CONCENTRATION_R0);
       setTimeToRead(MQ131_DEFAULT_LH_CONCENTRATION_TIME2READ);
       break;
     case HIGH_CONCENTRATION :
@@ -170,24 +170,24 @@ MQ131Class::~MQ131Class() {
  */
  float MQ131Class::getEnvCorrectRatio() {
  	// Select the right equation based on humidity
- 	// If default value, ignore correction ratio
+  // Extract/calc the ratios for diferent Humidity
+   float Hratio85 = -0.0141 * temperatureCelsuis + 1.5623; // R^2 = 0.9986
+   float Hratio60 = -0.0119 * temperatureCelsuis + 1.3261; // R^2 = 0.9976
+   float Hratio30 = -0.0103 * temperatureCelsuis + 1.1507; // R^2 = 0.996
+  
+   // If default value, ignore correction ratio
  	if(humidityPercent == 60 && temperatureCelsuis == 20) {
- 		return 1.0;
+ 		return 1.06;
  	}
- 	// For humidity > 75%, use the 85% curve
- 	if(humidityPercent > 75) {
- 		// R^2 = 0.9986
- 		return -0.0141 * temperatureCelsuis + 1.5623;
+ 	// For humidity > 60% ratio Average between 60-85 curves
+ 	if(humidityPercent > 60) {
+ 		    
+ 		return Hratio60 + (Hratio85 - Hratio60) * (humidityPercent - 60) / (85 - 60);
  	}
- 	// For humidity > 50%, use the 60% curve
- 	if(humidityPercent > 50) {
- 		// R^2 = 0.9976
- 		return -0.0119 * temperatureCelsuis + 1.3261;
- 	}
-
- 	// Humidity < 50%, use the 30% curve
- 	// R^2 = 0.996
- 	return -0.0103 * temperatureCelsuis + 1.1507;
+  	
+ 	// Humidity < 60%, ratio Average between 30-60 curves
+ 	
+ 	return Hratio30 + (Hratio60 - Hratio30) * (humidityPercent - 30) / (60 - 30);
  }
 
  /**
@@ -208,7 +208,7 @@ MQ131Class::~MQ131Class() {
       // Compute the ratio Rs/R0 and apply the environmental correction
       ratio = lastValueRs / valueR0 * getEnvCorrectRatio();
       return convert(9.4783 * pow(ratio, 2.3348), PPB, unit);
-     case LH_CONCENTRATION :
+     case ETC_CONCENTRATION :
  			// Use the equation to compute the O3 concentration in ppm
  			// R^2 = 0.99
       // Compute the ratio Rs/R0 and apply the environmental correction
