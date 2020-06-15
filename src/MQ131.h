@@ -41,12 +41,12 @@
 #define MQ131_DEFAULT_HUMIDITY_PERCENT              65                // Default humidity to correct environmental drift
 #define MQ131_DEFAULT_LO_CONCENTRATION_R0           1917.22           // Default R0 for low concentration MQ131
 #define MQ131_DEFAULT_LO_CONCENTRATION_TIME2READ    80                // Default time to read before stable signal for low concentration MQ131
-#define MQ131_DEFAULT_LH_CONCENTRATION_R0           12000.00          // Default R0 for Low Higher concentration MQ131
-#define MQ131_DEFAULT_LH_CONCENTRATION_TIME2READ    80                // Default time to read before stable signal for Low Higher concentration MQ131
+#define MQ131_DEFAULT_ETC_CONCENTRATION_R0           12000.00          // Default R0 for ETC Sensor concentration MQ131
+#define MQ131_DEFAULT_ETC_CONCENTRATION_TIME2READ    80                // Default time to read before stable signal for ETC concentration MQ131
 #define MQ131_DEFAULT_HI_CONCENTRATION_R0           235.00            // Default R0 for high concentration MQ131
 #define MQ131_DEFAULT_HI_CONCENTRATION_TIME2READ    80                // Default time to read before stable signal for high concentration MQ131
 
-enum MQ131Model {LOW_CONCENTRATION, LH_CONCENTRATION, HIGH_CONCENTRATION};
+enum MQ131Model {LOW_CONCENTRATION, ETC_CONCENTRATION, HIGH_CONCENTRATION};
 enum MQ131Unit {PPM, PPB, MG_M3, UG_M3};
 
 class MQ131Class {
