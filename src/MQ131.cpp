@@ -65,6 +65,10 @@ MQ131Class::~MQ131Class() {
       setR0(MQ131_DEFAULT_LO_CONCENTRATION_R0);
       setTimeToRead(MQ131_DEFAULT_LO_CONCENTRATION_TIME2READ);
       break;
+    case LH_CONCENTRATION :
+      setR0(MQ131_DEFAULT_LH_CONCENTRATION_R0);
+      setTimeToRead(MQ131_DEFAULT_LH_CONCENTRATION_TIME2READ);
+      break;
     case HIGH_CONCENTRATION :
       setR0(MQ131_DEFAULT_HI_CONCENTRATION_R0);
       setTimeToRead(MQ131_DEFAULT_HI_CONCENTRATION_TIME2READ);
@@ -204,6 +208,12 @@ MQ131Class::~MQ131Class() {
       // Compute the ratio Rs/R0 and apply the environmental correction
       ratio = lastValueRs / valueR0 * getEnvCorrectRatio();
       return convert(9.4783 * pow(ratio, 2.3348), PPB, unit);
+     case LH_CONCENTRATION :
+ 			// Use the equation to compute the O3 concentration in ppm
+ 			// R^2 = 0.99
+      // Compute the ratio Rs/R0 and apply the environmental correction
+      ratio = lastValueRs / valueR0 * getEnvCorrectRatio();
+      return convert(23.8887 * pow(ratio, 1.1101), PPM, unit);
  		case HIGH_CONCENTRATION :
  			// Use the equation to compute the O3 concentration in ppm
  			// R^2 = 0.99
