@@ -2,6 +2,13 @@
 Arduino library for ozone gas sensor MQ131
 
  This is a comprehensive Arduino library to obtain ozone (O3) concentration in the air with the Winsen MQ131 sensor. The library supports both versions of the sensor (low concentration and high concentration), the calibration, the control of the heater, the environmental adjustments (temperature and humidity) and the output of values in ppm (parts per million), ppb (parts per billion), mg/m3 and µg/m3.
+ 
+ ## Edits by my own...
+ This Branch takes the amazing work of Ostaquet and includes:
+ -Model LH_CONCENTRATION -> Usado nos Modulos SainSmart com raio de medição de 10-2.000 ppb de Ozono
+ It uses this derivated sensor https://datasheetspdf.com/pdf-file/770517/ETC/MQ-131/1
+ The R0 values are around 12 kOhms, and I sugest to use as RL a 47Kohm
+ For future I plan just to add a more precise enviromental correction.
 
 ## To know before starting...
  * The MQ131 is a [semiconductor gas sensor](https://en.wikipedia.org/wiki/Gas_detector#Semiconductor) composed by a heater circuit and a sensor circuit.
