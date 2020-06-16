@@ -171,9 +171,9 @@ MQ131Class::~MQ131Class() {
  float MQ131Class::getEnvCorrectRatio() {
  	// Select the right equation based on humidity
   // Extract/calc the ratios for diferent Humidity
-   float Hratio85 = -0.0141 * temperatureCelsuis + 1.5623; // R^2 = 0.9986
+   float Hratio30 = -0.0141 * temperatureCelsuis + 1.5623; // R^2 = 0.9986
    float Hratio60 = -0.0119 * temperatureCelsuis + 1.3261; // R^2 = 0.9976
-   float Hratio30 = -0.0103 * temperatureCelsuis + 1.1507; // R^2 = 0.996
+   float Hratio85 = -0.0103 * temperatureCelsuis + 1.1507; // R^2 = 0.996
   
    // If default value, ignore correction ratio
  	if(humidityPercent == 60 && temperatureCelsuis == 20) {
