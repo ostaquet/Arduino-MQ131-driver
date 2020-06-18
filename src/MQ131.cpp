@@ -90,6 +90,7 @@ MQ131Class::~MQ131Class() {
  		delay(1000);
  	}
  	lastValueRs = readRs();
+  correctedLastValueRs = lastValueRs / getEnvCorrectRatio();
  	stopHeater();
  }
 
@@ -146,8 +147,9 @@ MQ131Class::~MQ131Class() {
  	// Read the value
  	uint16_t valueSensor = analogRead(pinSensor);
  	// Compute the voltage on load resistance (for 5V Arduino)
- 	float vRL = ((float)valueSensor) / 1024.0 * 5.0;
+  float vRL = ((float)valueSensor) / 1024.0 * 5.0;
  	// Compute the resistance of the sensor (for 5V Arduino)
+  if(!vRL) return 0.0f; //division by zero prevention
  	float rS = (5.0 / vRL - 1.0) * valueRL;
  	return rS;
  }
@@ -202,14 +204,14 @@ MQ131Class::~MQ131Class() {
  			// Use the equation to compute the O3 concentration in ppm
  			// R^2 = 0.9987
       // Compute the ratio Rs/R0 and apply the environmental correction
-      ratio = lastValueRs / valueR0 * getEnvCorrectRatio();
-      return convert(9.4783 * pow(ratio, 2.3348), PPB, unit);
+      ratio = correctedLastValueRs / correctedValueR0;
+      return convert((10.66435681 * pow(ratio, 2.25889394) - 10.66435681), PPB, unit);
  		case HIGH_CONCENTRATION :
  			// Use the equation to compute the O3 concentration in ppm
  			// R^2 = 0.99
       // Compute the ratio Rs/R0 and apply the environmental correction
-      ratio = lastValueRs / valueR0 * getEnvCorrectRatio();
-      return convert(8.1399 * pow(ratio, 2.3297), PPM, unit);
+      ratio = correctedLastValueRs / correctedValueR0;
+      return convert((8.37768358 * pow(ratio, 2.30375446) - 8.37768358), PPM, unit);
  		default :
  			return 0.0;
   }
@@ -262,6 +264,7 @@ void MQ131Class::calibrate() {
   // Take care of the last Rs value read on the sensor
   // (forget the decimals)
   float lastRsValue = 0;
+  float lastLastRsValue = 0;
   // Count how many time we keep the same Rs value in a row
   uint8_t countReadInRow = 0;
   // Count how long we have to wait to have consistent value
@@ -290,7 +293,8 @@ void MQ131Class::calibrate() {
       debugStream->println(F(" Ohms"));
     }
     
-    if((uint32_t)lastRsValue != (uint32_t)value) {
+    if((uint32_t)lastRsValue != (uint32_t)value && (uint32_t)lastLastRsValue != (uint32_t)value) {
+      lastLastRsValue = lastRsValue;
       lastRsValue = value;
       countReadInRow = 0;
     } else {
@@ -320,6 +324,7 @@ void MQ131Class::calibrate() {
   */
   void MQ131Class::setR0(float _valueR0) {
   	valueR0 = _valueR0;
+    correctedValueR0 = _valueR0 / getEnvCorrectRatio();
   }
 
  /**
