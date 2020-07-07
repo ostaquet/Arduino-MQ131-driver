@@ -123,11 +123,9 @@ class MQ131Class {
 
 		// Calibration of R0
 		float valueR0 = -1;
-		float correctedValueR0 = -1;
 
 		// Last value for sensor resistance
 		float lastValueRs = -1;
-		float correctedLastValueRs = -1;
 
 		// Parameters for environment
 		int8_t temperatureCelsuis = MQ131_DEFAULT_TEMPERATURE_CELSIUS;

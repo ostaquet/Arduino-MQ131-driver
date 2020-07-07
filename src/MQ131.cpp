@@ -90,7 +90,6 @@ MQ131Class::~MQ131Class() {
  		delay(1000);
  	}
  	lastValueRs = readRs();
-  correctedLastValueRs = lastValueRs / getEnvCorrectRatio();
  	stopHeater();
  }
 
@@ -204,13 +203,13 @@ MQ131Class::~MQ131Class() {
  			// Use the equation to compute the O3 concentration in ppm
  			// R^2 = 0.9987
       // Compute the ratio Rs/R0 and apply the environmental correction
-      ratio = correctedLastValueRs / correctedValueR0;
+      ratio = lastValueRs / valueR0 * getEnvCorrectRatio();
       return convert((10.66435681 * pow(ratio, 2.25889394) - 10.66435681), PPB, unit);
  		case HIGH_CONCENTRATION :
  			// Use the equation to compute the O3 concentration in ppm
  			// R^2 = 0.99
       // Compute the ratio Rs/R0 and apply the environmental correction
-      ratio = correctedLastValueRs / correctedValueR0;
+      ratio = lastValueRs / valueR0 * getEnvCorrectRatio();
       return convert((8.37768358 * pow(ratio, 2.30375446) - 8.37768358), PPM, unit);
  		default :
  			return 0.0;
@@ -324,7 +323,6 @@ void MQ131Class::calibrate() {
   */
   void MQ131Class::setR0(float _valueR0) {
   	valueR0 = _valueR0;
-    correctedValueR0 = _valueR0 / getEnvCorrectRatio();
   }
 
  /**
