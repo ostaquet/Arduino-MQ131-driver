@@ -1,6 +1,10 @@
 # Arduino-MQ131-driver
 Arduino library for ozone gas sensor MQ131
 
+[![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/ostaquet/Arduino-MQ131-driver/blob/master/LICENSE)
+[![GitHub release](https://img.shields.io/github/release/ostaquet/Arduino-MQ131-driver.svg)](#releases)
+[![GitHub issues](https://img.shields.io/github/issues/ostaquet/Arduino-MQ131-driver.svg)](https://github.com/ostaquet/Arduino-MQ131-driver/issues)
+
  This is a comprehensive Arduino library to obtain ozone (O3) concentration in the air with the Winsen MQ131 sensor. The library supports both versions of the sensor (low concentration and high concentration), the calibration, the control of the heater, the environmental adjustments (temperature and humidity) and the output of values in ppm (parts per million), ppb (parts per billion), mg/m3 and µg/m3.
 
 ## To know before starting...
