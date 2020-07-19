@@ -201,16 +201,27 @@ MQ131Class::~MQ131Class() {
  	switch(model) {
  		case LOW_CONCENTRATION :
  			// Use the equation to compute the O3 concentration in ppm
- 			// R^2 = 0.9987
       // Compute the ratio Rs/R0 and apply the environmental correction
       ratio = lastValueRs / valueR0 * getEnvCorrectRatio();
-      return convert((10.66435681 * pow(ratio, 2.25889394) - 10.66435681), PPB, unit);
+      // R^2 = 0.9906
+      // Use this if you are monitoring low concentration of O3 (air quality project)
+      return convert(9.4783 * pow(ratio, 2.3348), PPB, unit);
+      
+      // R^2 = 0.9986 but nearly impossible to have 0ppb
+      // Use this if you are constantly monitoring high concentration of O3
+      // return convert((10.66435681 * pow(ratio, 2.25889394) - 10.66435681), PPB, unit);
  		case HIGH_CONCENTRATION :
  			// Use the equation to compute the O3 concentration in ppm
- 			// R^2 = 0.99
+ 			
       // Compute the ratio Rs/R0 and apply the environmental correction
       ratio = lastValueRs / valueR0 * getEnvCorrectRatio();
-      return convert((8.37768358 * pow(ratio, 2.30375446) - 8.37768358), PPM, unit);
+      // R^2 = 0.9900
+      // Use this if you are monitoring low concentration of O3 (air quality project)
+      return convert(8.1399 * pow(ratio, 2.3297), PPM, unit);
+      
+      // R^2 = 0.9985 but nearly impossible to have 0ppm
+      // Use this if you are constantly monitoring high concentration of O3
+      // return convert((8.37768358 * pow(ratio, 2.30375446) - 8.37768358), PPM, unit);
  		default :
  			return 0.0;
   }
