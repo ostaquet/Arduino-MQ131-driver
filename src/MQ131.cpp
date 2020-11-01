@@ -69,6 +69,12 @@ MQ131Class::~MQ131Class() {
       setR0(MQ131_DEFAULT_HI_CONCENTRATION_R0);
       setTimeToRead(MQ131_DEFAULT_HI_CONCENTRATION_TIME2READ);
       break;
+      
+      case SN_O2_LOW_CONCENTRATION:
+      ratio = 12.15* lastValueRs / valueR0 * getEnvCorrectRatio();
+      return convert(26.941*pow(ratio,-1.16),PPB,unit); // r^2 = 0.9956
+      break;
+      
   }
 
  	// Setup pin mode
