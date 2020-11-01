@@ -89,7 +89,7 @@ class MQ131Class {
 		void calibrate();
 
 	private:
-    // Internal helpers
+    		// Internal helpers
 		// Internal function to manage the heater
 		void startHeater();
 		bool isTimeToRead();
@@ -101,21 +101,21 @@ class MQ131Class {
 		// Get environmental correction to apply on ration Rs/R0
 		float getEnvCorrectRatio();
 
-    // Convert gas unit of gas concentration
-    float convert(float input, MQ131Unit unitIn, MQ131Unit unitOut);
+    		// Convert gas unit of gas concentration
+    		float convert(float input, MQ131Unit unitIn, MQ131Unit unitOut);
 
-    // Internal variables
+    		// Internal variables
 		// Model of MQ131
 		MQ131Model model;
 
-    // Serial console for the debug
-    Stream* debugStream = NULL;
-    bool enableDebug = false;
+    		// Serial console for the debug
+    		Stream* debugStream = NULL;
+    		bool enableDebug = false;
 
 		// Details about the circuit: pins and load resistance value
 		uint8_t pinPower = -1;
 		uint8_t pinSensor = -1;
-		uint16_t valueRL = -1;
+		uint32_t valueRL = -1;
 
 		// Timer to keep track of the pre-heating
 		uint32_t secLastStart = -1;
