@@ -12,8 +12,11 @@ Arduino library for ozone gas sensor MQ131
  * Heater consumes at least 150 mA. So, __don't connect it directly on a pin of the Arduino__.
  * It is important to respect the pinout of the sensor. If you put Vcc on the sensor and not on the heater, __you could damage your sensor irreversibly.__ 
  * Sensor MQ131 requires minimum 48h preheat time before giving consistent results (also called "burn-in" time)
- * There are two different MQ131; a black bakelite sensor for low concentration of ozone and a metal sensor for high concentration of ozone.
- * This driver is made to control the "naked" [Winsen](https://www.winsen-sensor.com) MQ131. The driver is able to pilot the [low concentration version](https://github.com/ostaquet/Arduino-MQ131-driver/blob/master/extras/datasheet/MQ131-low-concentration.pdf) and the [high concentration version](https://github.com/ostaquet/Arduino-MQ131-driver/blob/master/extras/datasheet/MQ131-high-concentration.pdf).
+ * There are three different MQ131: 
+   * a black bakelite sensor for low concentration of ozone (with WO3 sensitive material)
+   * a blue bakelite sensor for low concentration of ozone (with SnO2 sensitive material)
+   * a metal sensor for high concentration of ozone.
+ * This driver is made to control the "naked" [Winsen](https://www.winsen-sensor.com) MQ131. The driver is able to pilot the [low concentration WO3 version](https://github.com/ostaquet/Arduino-MQ131-driver/blob/master/extras/datasheet/MQ131-low-concentration.pdf), the [low concentration Sn02 version](https://github.com/ostaquet/Arduino-MQ131-driver/blob/master/extras/datasheet/MQ131-low-concentration-SnO2.pdf) and the [high concentration version](https://github.com/ostaquet/Arduino-MQ131-driver/blob/master/extras/datasheet/MQ131-high-concentration.pdf).
  * To measure the air quality (e.g. pollution), it's better to use the low concentration MQ131 because the high concentration is not accurate enough for low concentration.
  
 ## How to install the library?
@@ -100,7 +103,7 @@ Concentration O3 : 16.80 ug/m3
 The driver has to be initialized with 4 parameters:
  * Pin to control the heater power (example: 2)
  * Pin to measure the analog output (example: A0)
- * Model of sensor `LOW_CONCENTRATION` or `HIGH_CONCENTRATION` (example: `LOW_CONCENTRATION`)
+ * Model of sensor `LOW_CONCENTRATION`, `SN_O2_LOW_CONCENTRATION` or `HIGH_CONCENTRATION` (example: `LOW_CONCENTRATION`)
  * Value of load resistance in Ohms (example: 1000000 Ohms)
 ```
 MQ131.begin(2,A0, LOW_CONCENTRATION, 1000000);
@@ -148,5 +151,6 @@ MQ131.setEnv(23, 70);
 
 ## Links
  * [Calculation of sensitivity curves](https://github.com/ostaquet/Arduino-MQ131-driver/blob/master/extras/datasheet/Sensitivity_curves.xlsx)
- * [Datasheet MQ131 low concentration (black bakelite version)](https://github.com/ostaquet/Arduino-MQ131-driver/blob/master/extras/datasheet/MQ131-low-concentration.pdf)
+ * [Datasheet MQ131 low concentration WO3 (black bakelite version)](https://github.com/ostaquet/Arduino-MQ131-driver/blob/master/extras/datasheet/MQ131-low-concentration.pdf)
+ * [Datasheet MQ131 low concentration SnO2 (blue bakelite version)](https://github.com/ostaquet/Arduino-MQ131-driver/blob/master/extras/datasheet/MQ131-low-concentration-SnO2.pdf)
  * [Datasheet MQ131 high concentration (metal version)](https://github.com/ostaquet/Arduino-MQ131-driver/blob/master/extras/datasheet/MQ131-high-concentration.pdf)
