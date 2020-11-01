@@ -44,7 +44,7 @@
 #define MQ131_DEFAULT_HI_CONCENTRATION_R0           235.00            // Default R0 for high concentration MQ131
 #define MQ131_DEFAULT_HI_CONCENTRATION_TIME2READ    80                // Default time to read before stable signal for high concentration MQ131
 
-enum MQ131Model {LOW_CONCENTRATION, HIGH_CONCENTRATION};
+enum MQ131Model {LOW_CONCENTRATION, HIGH_CONCENTRATION,SN_O2_LOW_CONCENTRATION};
 enum MQ131Unit {PPM, PPB, MG_M3, UG_M3};
 
 class MQ131Class {
