@@ -68,13 +68,12 @@ MQ131Class::~MQ131Class() {
     case HIGH_CONCENTRATION :
       setR0(MQ131_DEFAULT_HI_CONCENTRATION_R0);
       setTimeToRead(MQ131_DEFAULT_HI_CONCENTRATION_TIME2READ);
+      break; 
+    case SN_O2_LOW_CONCENTRATION:
+      // Not tested by @ostaquet (I don't have this type of sensor)
+      setR0(MQ131_DEFAULT_LO_CONCENTRATION_R0);
+      setTimeToRead(MQ131_DEFAULT_LO_CONCENTRATION_TIME2READ);
       break;
-      
-      case SN_O2_LOW_CONCENTRATION:
-      ratio = 12.15* lastValueRs / valueR0 * getEnvCorrectRatio();
-      return convert(26.941*pow(ratio,-1.16),PPB,unit); // r^2 = 0.9956
-      break;
-      
   }
 
  	// Setup pin mode
@@ -216,6 +215,7 @@ MQ131Class::~MQ131Class() {
       // R^2 = 0.9986 but nearly impossible to have 0ppb
       // Use this if you are constantly monitoring high concentration of O3
       // return convert((10.66435681 * pow(ratio, 2.25889394) - 10.66435681), PPB, unit);
+
  		case HIGH_CONCENTRATION :
  			// Use the equation to compute the O3 concentration in ppm
  			
@@ -228,6 +228,14 @@ MQ131Class::~MQ131Class() {
       // R^2 = 0.9985 but nearly impossible to have 0ppm
       // Use this if you are constantly monitoring high concentration of O3
       // return convert((8.37768358 * pow(ratio, 2.30375446) - 8.37768358), PPM, unit);
+
+    case SN_O2_LOW_CONCENTRATION:
+      // NOT TESTED BY @ostaquet (I don't have this type of sensor)
+      ratio = 12.15* lastValueRs / valueR0 * getEnvCorrectRatio();
+      // r^2 = 0.9956
+      return convert(26.941 * pow(ratio,-1.16),PPB,unit);
+      break;
+      
  		default :
  			return 0.0;
   }
